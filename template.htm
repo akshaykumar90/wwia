@@ -6,38 +6,48 @@
     <title>When Will It Air?</title>
 </head>
 <body>
-    {% for tvshow in tvshows %}
+    {% for series in tvshows %}
     <div class="container">
-        <h1>{{ tvshow.name }} on {{ tvshow.network }}</h1> 
-        <h2 class="subtitle">Season {{ tvshow.season }} Episode {{ tvshow.episodeNo }}</h2> 
-        <div id = "tvshow{{  tvshow.id }}"> 
-			<div class="dash weeks_dash"> 
-				<span class="dash_title">weeks</span> 
-				<div class="digit">0</div> 
-				<div class="digit">0</div> 
-			</div>
-			<div class="dash days_dash"> 
-				<span class="dash_title">days</span> 
-				<div class="digit">0</div> 
-				<div class="digit">0</div> 
-			</div>
-			<div class="dash hours_dash"> 
-				<span class="dash_title">hours</span> 
-				<div class="digit">0</div> 
-				<div class="digit">0</div> 
-			</div>
-			<div class="dash minutes_dash"> 
-				<span class="dash_title">minutes</span> 
-				<div class="digit">0</div> 
-				<div class="digit">0</div> 
-			</div> 
-			<div class="dash seconds_dash"> 
-				<span class="dash_title">seconds</span> 
-				<div class="digit">0</div> 
-				<div class="digit">0</div> 
-			</div> 
-        </div>
-        <div style="clear: both;"></div>
+        <h1>{{ series.name }} on {{ series.network }}</h1> 
+        {% for show in series.shows %}
+            {% if show.latest is defined %}
+            <h2 class="subtitle">Season {{ show.season }} Episode {{ show.episodeNo }}</h2> 
+            <div id = "tvshow{{  tvshow.id }}"> 
+                <div class="dash weeks_dash"> 
+                    <span class="dash_title">weeks</span> 
+                    <div class="digit">0</div> 
+                    <div class="digit">0</div> 
+                </div>
+                <div class="dash days_dash"> 
+                    <span class="dash_title">days</span> 
+                    <div class="digit">0</div> 
+                    <div class="digit">0</div> 
+                </div>
+                <div class="dash hours_dash"> 
+                    <span class="dash_title">hours</span> 
+                    <div class="digit">0</div> 
+                    <div class="digit">0</div> 
+                </div>
+                <div class="dash minutes_dash"> 
+                    <span class="dash_title">minutes</span> 
+                    <div class="digit">0</div> 
+                    <div class="digit">0</div> 
+                </div> 
+                <div class="dash seconds_dash"> 
+                    <span class="dash_title">seconds</span> 
+                    <div class="digit">0</div> 
+                    <div class="digit">0</div> 
+                </div> 
+            </div>
+            <div style="clear: both;"></div>
+            {% else %}
+            <div>
+            {{ show.season }}<br/>
+            {{ show.episode_no }}<br/>
+            {{ show.date }}<br/>
+            </div>
+            {% endif %}
+        {% endfor %}
     </div>
     {% endfor %}
 

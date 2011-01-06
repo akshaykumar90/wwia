@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <link rel="Stylesheet" type="text/css" href="../wwia_files/style/main.css"></link>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>When Will It Air?</title>
+</head>
+<body>
+    {% for tvshow in tvshows %}
+    <div class="container">
+        <h1>{{ tvshow.name }} on {{ tvshow.network }}</h1> 
+        <h2 class="subtitle">Season {{ tvshow.season }} Episode {{ tvshow.episodeNo }}</h2> 
+        <div id = "tvshow{{  tvshow.id }}"> 
+			<div class="dash weeks_dash"> 
+				<span class="dash_title">weeks</span> 
+				<div class="digit">0</div> 
+				<div class="digit">0</div> 
+			</div>
+			<div class="dash days_dash"> 
+				<span class="dash_title">days</span> 
+				<div class="digit">0</div> 
+				<div class="digit">0</div> 
+			</div>
+			<div class="dash hours_dash"> 
+				<span class="dash_title">hours</span> 
+				<div class="digit">0</div> 
+				<div class="digit">0</div> 
+			</div>
+			<div class="dash minutes_dash"> 
+				<span class="dash_title">minutes</span> 
+				<div class="digit">0</div> 
+				<div class="digit">0</div> 
+			</div> 
+			<div class="dash seconds_dash"> 
+				<span class="dash_title">seconds</span> 
+				<div class="digit">0</div> 
+				<div class="digit">0</div> 
+			</div> 
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+    {% endfor %}
+
+    <script>
+        var data = {
+            {% for item in datalist %}
+            {{ item.name }} : {
+                day : {{ item.day }},
+                hour : {{ item.hour }},
+                min : {{ item.min }},
+                sec : {{ item.sec }}
+            },
+            {% endfor %}
+        };
+    </script>
+    <script language="Javascript" type="text/javascript" src="files/js/jquery-1.4.1.js"></script> 
+	<script language="Javascript" type="text/javascript" src="files/js/jquery.lwtCountdown-1.0.js"></script> 
+    <script language="Javascript" type="text/javascript" src="files/js/custom.js"></script> 
+</body> 
+</html> 

@@ -16,7 +16,7 @@ def index():
     # Convert to US/Eastern time zone
     now_eastern = now_utc.astimezone(timezone('US/Eastern'))
 
-    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb")
+    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb", use_unicode=True)
     cursor = conn.cursor()
     
     # Get the tvshows data from `tvshows`

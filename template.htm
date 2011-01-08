@@ -1,18 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <link rel="Stylesheet" type="text/css" href="files/style/main.css"></link>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="Stylesheet" type="text/css" href="files/style/main.css"></link>
     <title>When Will It Air?</title>
 </head>
 <body>
     {% for series in tvshows %}
     <div class="container">
-        <h1>{{ series.name }} on {{ series.network }}</h1> 
+        <h1>{{ series.name }}</h1>
+        <h2>{{ series.network }}</h2>
+        {% if series.upcoming is not defined %}
+        <h3>Previous Episodes</h3>
+        {% endif %}
         {% for show in series.shows %}
-            {% if show.latest is defined %}
-            <h2 class="subtitle">Season {{ show.season }} Episode {{ show.episodeNo }}</h2> 
-            <div id = "tvshow{{  tvshow.id }}"> 
+            {% if show.latest is defined%}
+            <h3>Upcoming</h3>
+            <ul class="episode"> 
+                <li><span class="epname">{{ show.name }} |</span> Season {{ show.season }} Episode {{ show.episode_no }}</li>
+                <li><span class="date">{{ show.date }}</span></li>
+            </ul>
+            <div id = "tvshow{{  series.id }}" class="countdown"> 
                 <div class="dash weeks_dash"> 
                     <span class="dash_title">weeks</span> 
                     <div class="digit">0</div> 
@@ -38,15 +46,14 @@
                     <div class="digit">0</div> 
                     <div class="digit">0</div> 
                 </div> 
+                <div style="clear: both;"></div>
             </div>
-            <div style="clear: both;"></div>
+            <h3>Previous Episodes</h3>
             {% else %}
-            <div>
-            {{ show.season }}<br/>
-            {{ show.episode_no }}<br/>
-            {{ show.date }}<br/>
-            {{ show.name }}<br/>
-            </div>
+            <ul class="episode"> 
+                <li><span class="epname">{{ show.name }} |</span> Season {{ show.season }} Episode {{ show.episode_no }}</li>
+                <li><span class="date">{{ show.date }}</span></li>
+            </ul>
             {% endif %}
         {% endfor %}
     </div>

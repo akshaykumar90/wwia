@@ -107,6 +107,8 @@ def index():
                    'network' : dictShowData[SHOW_ID][1], # From `tvshows`
                    'shows' : seriesdata
                  }
+        if (upcoming):
+            info_s['upcoming'] = True
         tvshowsdata.append(info_s)
 
     cursor.close()

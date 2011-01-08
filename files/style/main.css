@@ -4,32 +4,52 @@ html, body {
 }
 
 body {
-	text-align: center;
-}
-
-h1 {
-	font-size: 28pt;
-	border-bottom: 1px solid #ddd;
-	margin: 0;
-}
-
-h2.subtitle {
-	margin-top: 0px;
-	margin-bottom: 40px;
-}
-
-h3 {
-    display: none;
+    background-color : #eee;
 }
 
 div.container {
 	margin: 100px auto;
 	width: 700px;
-	color: #555;
 }
 
-#countdown_dashboard {
-	height: 110px;
+h1 {
+    font-family: Georgia, Garamond, serif;
+	font-size: 28pt;
+	margin: 0;
+}
+
+h2 {
+    font-family: Georgia, Garamond, serif;
+	font-size: 12pt;
+	margin: 0;
+}
+
+h3 {
+    font-family: Garamond, serif;
+	font-size: 14pt;
+	margin: 0px;
+    padding: 10px 0px 5px 0px;
+    border-bottom: #666 solid 1px;
+}
+
+ul {
+    list-style-type: none;
+    margin-left : 0px;
+    padding-left : 0px;
+    font-family:  Calibri, Helvetica, sans-serif;
+    line-height: 1.3em;
+}
+
+span.epname {
+    font-size : 24px;
+}
+
+span.date {
+    font-style : italic;
+}
+
+div.countdown {
+    margin : 10px auto;
 }
 
 .dash {
@@ -47,8 +67,7 @@ div.container {
 	float: left;
 	width: 55px;
 	text-align: center;
-	font-family: Times;
-	color: #555;
+	font-family:  "Trebuchet MS", Helvetica, sans-serif;
 	position: relative;
 }
 
@@ -58,7 +77,6 @@ div.container {
 	bottom: 0px;
 	right: 6px;
 	font-size: 9pt;
-	color: #555;
 	text-transform: uppercase;
 	letter-spacing: 2px;
 }

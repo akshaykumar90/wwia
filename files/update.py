@@ -110,7 +110,6 @@ def update():
             else:
                 break
         
-        # To be tested
         if valuesList:
             n = len(valuesList) / 5
             valuesStr = ('(%s, %s, %s, %s, %s),' * n)[:-1]

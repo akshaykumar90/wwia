@@ -1,6 +1,7 @@
 import urllib2
 from BeautifulSoup import BeautifulSoup
 import MySQLdb
+import datetime
 
 def update():
     months = {"Jan" : 1, "Feb" : 2, "Mar" : 3, "Apr" : 4, "May" : 5, "Jun" : 6,
@@ -9,32 +10,37 @@ def update():
     conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb")
     cursor = conn.cursor()
 
+    # Get the URL for all shows from database
     cursor.execute('SELECT show_id, baseurl FROM tvshows')
-    rows = cursor.fetchall()
+    rowsAllShows = cursor.fetchall()
     
-    latestqueryStr = '''SELECT t1.tvshows_show_id, t1.season, t1.episode_no
+    # Get the latest episode for each show stored in database
+    latestqueryStr = '''SELECT t1.tvshows_show_id, t1.season, t1.episode_no, t1.`date`
                       FROM episodes AS t1
                       LEFT OUTER JOIN episodes AS t2
                       ON (t1.tvshows_show_id = t2.tvshows_show_id AND t1.date < t2.date)
                       WHERE t2.tvshows_show_id IS NULL'''
     cursor.execute(latestqueryStr)
     rowsLatestEp = cursor.fetchall()
+    # Zip it up in a dictionary keyed on tvshows_show_id
     keys = [row[0] for row in rowsLatestEp]
-    values = [(int(row[1]), int(row[2])) for row in rowsLatestEp]
+    values = [row[1:] for row in rowsLatestEp]
     dictLatest = dict(zip(keys, values))
     
-    nullqueryStr = '''SELECT t1.tvshows_show_id, t1.season, t1.episode_no
+    # Get the oldest episode with name as NULL
+    nullqueryStr = '''SELECT t1.tvshows_show_id, t1.season, t1.episode_no, t1.`date`
                       FROM episodes as t1
                       LEFT OUTER JOIN episodes AS t2
-                      ON t1.tvshows_show_id = t2.tvshows_show_id AND t1.episode_no > t2.episode_no AND t1.name IS NULL AND t2.name IS NULL
+                      ON t1.tvshows_show_id = t2.tvshows_show_id AND t1.`date` > t2.`date` AND t1.name IS NULL AND t2.name IS NULL
                       WHERE t2.tvshows_show_id IS NULL AND t1.name IS NULL'''
     cursor.execute(nullqueryStr)
     rowsNullEp = cursor.fetchall()
+    # Zip it up in a dictionary keyed on tvshows_show_id
     keys = [row[0] for row in rowsNullEp]
-    values = [(int(row[1]), int(row[2])) for row in rowsNullEp]
+    values = [row[1:] for row in rowsNullEp]
     dictNull = dict(zip(keys, values))
     
-    for row in rows:
+    for row in rowsAllShows:
         SHOW_ID = row[0]
         BASE_URL = row[1]
         print "Opening URL... " + BASE_URL
@@ -77,16 +83,16 @@ def update():
 
         if dictLatest.has_key(SHOW_ID):
             dblatestEp = dictLatest[SHOW_ID]
-            print "Latest episode in database : %d-%d" % dblatestEp
+            print "Latest episode in database : %d-%d" % dblatestEp[:2]
         else:
-            dblatestEp = [-1, -1] # No Episodes available in database
+            dblatestEp = [-1, -1, datetime.date(datetime.MINYEAR, 1, 1)] # No Episodes available in database
             print "No episode data in database"
         
         if dictNull.has_key(SHOW_ID):
             dbnullEp = dictNull[SHOW_ID]
-            print "Oldest episode in database with name NULL : %d-%d" % dbnullEp
+            print "Oldest episode in database with name NULL : %d-%d" % dbnullEp[:2]
         else:
-            dbnullEp = [500, 500]; # No Episode with name `NULL`
+            dbnullEp = [500, 500, datetime.date(datetime.MAXYEAR, 1, 1)]; # No Episode with name `NULL`
             print "All episodes have name set"
             
         valuesList = []
@@ -99,12 +105,13 @@ def update():
             rawdate = episode.contents[3].contents[1].string.strip() # Oct 18, 2010 09:00 PM ET
             ldate = rawdate.split()
             date = "-".join([ ldate[2], str(months[ldate[0]]), ldate[1][:-1]])
-            if season > dblatestEp[0] or (season == dblatestEp[0] and epNo > dblatestEp[1]):
-                print "%d %d %s %s" % (season, epNo, epName, date)
-                newValues = [str(season), str(epNo), epName, date, str(SHOW_ID)]
+            date_obj = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+            if date_obj > dblatestEp[2]:
+                print "%d %d %s %s %d" % (season, epNo, epName if epName else 'NULL', date, SHOW_ID)
+                newValues = [str(season), str(epNo), epName if epName else 'NULL', date, str(SHOW_ID)]
                 valuesList.extend(newValues)
-            elif epNo >= dbnullEp[1] and epName:
-                print "%d %d %s %s" % (season, epNo, epName, date)
+            elif date_obj >= dbnullEp[2] and epName:
+                print "%d %d %s %s %d" % (season, epNo, epName, date, SHOW_ID)
                 cursor.execute('UPDATE episodes SET name = %s WHERE tvshows_show_id = %s AND season = %s AND episode_no = %s', \
                                (epName, SHOW_ID, season, epNo))
             else:

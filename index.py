@@ -12,9 +12,11 @@ def index():
 
     # Current time in UTC
     now_utc = datetime.datetime.now(timezone('UTC'))
-
+ 
     # Convert to US/Eastern time zone
     now_eastern = now_utc.astimezone(timezone('US/Eastern'))
+    now_date = now_eastern.date()
+    now_time = now_eastern.time()
 
     conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb", use_unicode=True)
     cursor = conn.cursor()
@@ -28,53 +30,88 @@ def index():
     values = [row[1:] for row in rowsShowData]
     dictShowData = dict(zip(keys, values))
     
-    # Get the latest 3 episodes for all tvshows found in the database
-    getlatestquery = '''(SELECT tvshows_show_id, season, episode_no, `name`, `date` 
+    # Get the upcoming 2 episodes for all tvshows found in the database
+    # If the episode has alreaady aired for today's date, it should not be
+    # counted as upcoming, rather the next episode is the upcoming episode,
+    # hence 2 episodes are retrieved from the database
+    getUpcomingEps = '''(SELECT tvshows_show_id, season, episode_no, `name`, `date` 
                          FROM episodes 
-                         WHERE tvshows_show_id = %s 
-                         ORDER BY `date` DESC 
-                         LIMIT 3)'''
-    fquery = [getlatestquery] * len(dictShowData.keys())
-    getlatestquery = ' UNION '.join(fquery) + ';'
-    cursor.execute( getlatestquery, dictShowData.keys())
-    rowsLatestData = cursor.fetchall()
-    # Zip them up in a dictionary keyed on tvshows_show_id; value is a list of tuples of 
-    # episode data
-    dictLatest = {}
-    for row in rowsLatestData:
-        if dictLatest.has_key(row[0]):
-            dictLatest[row[0]].append(row[1:])
+                         WHERE tvshows_show_id = %s and `date` >= "''' + str(now_date) + '''"
+                         ORDER BY `date` 
+                         LIMIT 2)'''
+    fquery = [getUpcomingEps] * len(dictShowData.keys())
+    getUpcomingEps = ' UNION '.join(fquery) + ';'
+    cursor.execute( getUpcomingEps, dictShowData.keys())
+    rowsUpcomingData = cursor.fetchall()
+    
+    dictUpcoming = {} # Stores all the upcoming/on tv episodes for all tvshows
+    dictPrevious = {} # Stores all the previous episodes for all tvshows
+    
+    # Insert in dictUpcoming if the episode has not aired yet,
+    # hence the check for time if episode for today has already aired or not
+    # In that case, insert the next episode from db which has been already
+    # retrieved. Remember 2? Also insert that episode into dictPrevious
+    for row in rowsUpcomingData:
+        if dictUpcoming.has_key(row[0]):
+            continue 
         else:
-            dictLatest[row[0]] = [row[1:]]
+            if (now_date == row[4] and now_time < end_time) or (now_date < row[4]):
+                dictUpcoming[row[0]] = row[1:]
+            else:
+                dictPrevious[row[0]] = [row[1:]]
+    
+    # Get the previous 2 episodes for all tvshows found in the database
+    getPreviousEps = '''(SELECT tvshows_show_id, season, episode_no, `name`, `date` 
+                         FROM episodes 
+                         WHERE tvshows_show_id = %s and `date` < "''' + str(now_date) + '''"
+                         ORDER BY `date` DESC
+                         LIMIT 2)'''
+    fquery = [getPreviousEps] * len(dictShowData.keys())
+    getPreviousEps = ' UNION '.join(fquery) + ';'
+    cursor.execute( getPreviousEps, dictShowData.keys())
+    rowsPreviousData = cursor.fetchall()
+    
+    for row in rowsPreviousData:
+        if dictPrevious.has_key(row[0]):
+            if len(dictPrevious[row[0]]) == 2: # Do not insert more that 2 episodes
+                pass
+            else:
+                dictPrevious[row[0]].append(row[1:])
+        else:
+            dictPrevious[row[0]] = [row[1:]]
     
     # To pass on to the template
     tvshowsdata = []
     countdowndata = []
 
-    for SHOW_ID, show_data in dictLatest.iteritems():
-        upcoming = True
-        seriesdata = [] # Data for a particular series; three episodes
-        latestshow = show_data[0]
+    for SHOW_ID in dictShowData.keys():
+        upcomingEps = []
+        previousEps = []
         
-        (season, episode_no, name, date) = latestshow
-        time = dictShowData[SHOW_ID][2] # From `tvshows`
-        end_time = dictShowData[SHOW_ID][3] # From `tvshows`
-        starttime = datetime.datetime.combine(date, datetime.time()) + time
-        endtime = datetime.datetime.combine(date, datetime.time()) + end_time
-        starttime = eastern.localize(starttime)
-        endtime = eastern.localize(endtime)
+        if dictUpcoming.has_key(SHOW_ID):
+            (season, episode_no, name, date) = dictUpcoming[SHOW_ID]
+            
+            info_u = { 'name' : name,
+                       'season' : season,
+                       'episode_no' : episode_no,
+                       'date' : date
+                     }
+            
+            time = dictShowData[SHOW_ID][2] # From `tvshows`
+            end_time = dictShowData[SHOW_ID][3] # From `tvshows`
+            starttime = datetime.datetime.combine(date, datetime.time()) + time
+            endtime = datetime.datetime.combine(date, datetime.time()) + end_time
+            starttime = eastern.localize(starttime)
+            endtime = eastern.localize(endtime)
         
-        if now_eastern > endtime:
-            # It's already over :(
-            upcoming = False
-        elif now_eastern > starttime:
-            # It's on TV right now!!!
-            td = endtime - now_eastern 
-        else:
-            # Wait for it..."
-            td = starttime - now_eastern
+            if now_eastern > starttime:
+                # It's on TV right now!!!
+                td = endtime - now_eastern 
+                info_u['on_tv'] = True
+            else:
+                # Wait for it..."
+                td = starttime - now_eastern
         
-        if (upcoming):
             days = td.days
             totalSeconds = td.seconds
             seconds = totalSeconds % 60
@@ -90,30 +127,32 @@ def index():
                             'sec' : seconds
                           }
             countdowndata.append(countdown_t)
+            
+            upcomingEps.append(info_u)
         
-        for show in show_data:
-            (season, episode_no, name, date) = show
-            info_t = { 'name' : name,
-                       'season' : season,
-                       'episode_no' : episode_no,
-                       'date' : date
-                     }
-            seriesdata.append(info_t)
-            if (upcoming):
-                seriesdata[0]['latest'] = True
+        if dictPrevious.has_key(SHOW_ID):
+            pEps = dictPrevious[SHOW_ID]
+            for ep in pEps:
+                (season, episode_no, name, date) = ep
+                info_t = { 'name' : name,
+                           'season' : season,
+                           'episode_no' : episode_no,
+                           'date' : date
+                         }
+                previousEps.append(info_t)
             
         info_s = { 'id' : SHOW_ID,
                    'name' : dictShowData[SHOW_ID][0], # From `tvshows`
                    'network' : dictShowData[SHOW_ID][1], # From `tvshows`
-                   'shows' : seriesdata
+                   'upcomingEps' : upcomingEps,
+                   'previousEps' : previousEps
                  }
-        if (upcoming):
-            info_s['upcoming'] = True
+        
         tvshowsdata.append(info_s)
 
     cursor.close()
     conn.close()
     
-    return template.render(tvshows = tvshowsdata, datalist = countdowndata)
+    return template.render(tvshows = tvshowsdata, countdown = countdowndata)
 
 if __name__=="__main__": index()

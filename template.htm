@@ -6,62 +6,77 @@
     <title>When Will It Air?</title>
 </head>
 <body>
-    {% for series in tvshows %}
+    {% for show in tvshows %}
     <div class="container">
-        <h1>{{ series.name }}</h1>
-        <h2>{{ series.network }}</h2>
-        {% if series.upcoming is not defined %}
-        <h3>Previous Episodes</h3>
-        {% endif %}
-        {% for show in series.shows %}
-            {% if show.latest is defined%}
+        <h1>{{ show.name }}</h1>
+        <h2>{{ show.network }}</h2>
+        
+        {% if show.upcomingEps %}
+            {% for ep in show.upcomingEps %}
+                {% if ep.on_tv is defined %}
+                    <h3>On TV Right Now</h3>
+                {% else %}
+                    <h3>Upcoming</h3>
+                {% endif %}
+                <ul class="episode"> 
+                    <li><span class="epname">{{ ep.name }} |</span> Season {{ ep.season }} Episode {{ ep.episode_no }}</li>
+                    <li><span class="date">{{ ep.date }}</span></li>
+                </ul>
+                <div id = "tvshow{{ show.id }}" class="countdown"> 
+                    <div class="dash weeks_dash"> 
+                        <span class="dash_title">weeks</span> 
+                        <div class="digit">0</div> 
+                        <div class="digit">0</div> 
+                    </div>
+                    <div class="dash days_dash"> 
+                        <span class="dash_title">days</span> 
+                        <div class="digit">0</div> 
+                        <div class="digit">0</div> 
+                    </div>
+                    <div class="dash hours_dash"> 
+                        <span class="dash_title">hours</span> 
+                        <div class="digit">0</div> 
+                        <div class="digit">0</div> 
+                    </div>
+                    <div class="dash minutes_dash"> 
+                        <span class="dash_title">minutes</span> 
+                        <div class="digit">0</div> 
+                        <div class="digit">0</div> 
+                    </div> 
+                    <div class="dash seconds_dash"> 
+                        <span class="dash_title">seconds</span> 
+                        <div class="digit">0</div> 
+                        <div class="digit">0</div> 
+                    </div> 
+                    <div style="clear: both;"></div>
+                </div>
+            {% endfor %}
+        {% else %}
             <h3>Upcoming</h3>
             <ul class="episode"> 
-                <li><span class="epname">{{ show.name }} |</span> Season {{ show.season }} Episode {{ show.episode_no }}</li>
-                <li><span class="date">{{ show.date }}</span></li>
+                <li>No Upcoming Episodes Data Available</li>
             </ul>
-            <div id = "tvshow{{  series.id }}" class="countdown"> 
-                <div class="dash weeks_dash"> 
-                    <span class="dash_title">weeks</span> 
-                    <div class="digit">0</div> 
-                    <div class="digit">0</div> 
-                </div>
-                <div class="dash days_dash"> 
-                    <span class="dash_title">days</span> 
-                    <div class="digit">0</div> 
-                    <div class="digit">0</div> 
-                </div>
-                <div class="dash hours_dash"> 
-                    <span class="dash_title">hours</span> 
-                    <div class="digit">0</div> 
-                    <div class="digit">0</div> 
-                </div>
-                <div class="dash minutes_dash"> 
-                    <span class="dash_title">minutes</span> 
-                    <div class="digit">0</div> 
-                    <div class="digit">0</div> 
-                </div> 
-                <div class="dash seconds_dash"> 
-                    <span class="dash_title">seconds</span> 
-                    <div class="digit">0</div> 
-                    <div class="digit">0</div> 
-                </div> 
-                <div style="clear: both;"></div>
-            </div>
-            <h3>Previous Episodes</h3>
-            {% else %}
+        {% endif %}
+        
+        <h3>Previous Episodes</h3>
+        {% if show.previousEps %}
+            {% for ep in show.previousEps %}
+                <ul class="episode"> 
+                    <li><span class="epname">{{ ep.name }} |</span> Season {{ ep.season }} Episode {{ ep.episode_no }}</li>
+                    <li><span class="date">{{ ep.date }}</span></li>
+                </ul>
+            {% endfor %}
+        {% else %}
             <ul class="episode"> 
-                <li><span class="epname">{{ show.name }} |</span> Season {{ show.season }} Episode {{ show.episode_no }}</li>
-                <li><span class="date">{{ show.date }}</span></li>
+                <li>No Previous Episodes Data Available</li>
             </ul>
-            {% endif %}
-        {% endfor %}
+        {% endif %}
     </div>
     {% endfor %}
 
     <script>
         var data = {
-            {% for item in datalist %}
+            {% for item in countdown %}
             {{ item.name }} : {
                 day : {{ item.day }},
                 hour : {{ item.hour }},

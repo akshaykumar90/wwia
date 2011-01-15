@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>When Will It Air? - Add More Shows</title>  
+    <link rel="stylesheet" href="files/style/addshows.css" type="text/css" /> 
+</head> 
+ 
+<body>
+    <h1>Add More Shows</h1>
+    <form action="./add.py/show" method="post">
+    <div class="showselectbody"> 
+    {% for letter in tvshowsdata %} 
+    <div class="showclear"></div>
+    <div class="boldletter">{{ letter.char }}</div> 
+    {% for show in letter.contents %}
+    <div id="check{{ show.id }}" class="checkedletter">
+        <label class="{{ 'checked' if show.checked else 'unchecked' }}">
+        <input class="checkbox" type="checkbox" name="selected_shows" value="{{ show.id }}" checked="{{ 'checked' if show.checked else 'unchecked' }}" />
+        {{ show.name }}
+        </label> 
+    </div> 
+    {% endfor %}
+    {% endfor %} 
+    </div> 
+    
+    <div> 
+        <input type="submit" name="filter" value="Save Filter" class="searchbutton" /><br />
+    </div> 
+    </form> 
+</body> 
+</html>

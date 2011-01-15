@@ -1,0 +1,114 @@
+body { 
+    color: #fff; 
+}
+
+.showselectbody { 
+    border-color: #000;
+    background: #333; 
+} 
+
+.explain { 
+    border-color: #000; 
+    background: #333; 
+}
+
+.boldletter { 
+    color: #fff; 
+    background: #222; 
+}
+
+.checkedletter { 
+    color: #f0f0f0; 
+}
+
+.normalletter {	
+    color: #bbb; 
+}
+
+.searchbutton { 
+    border-color: #333; 
+    color: #000; 
+    background: #FEA143; 
+} 
+ 
+/* CSS Document */
+
+body { font-family: Verdana, Arial, sans-serif; text-align: center; margin: 0 0 10px 0; padding: 0 0 5.5em 0; min-width: 960px; } 
+img { border: 0px; }
+ul { margin: 0; padding: 0; list-style-type: none; }
+form { display: inline; }
+
+.checkbox { 
+    position: absolute; 
+    left: -9999px; 
+    font-weight: bold; 
+    margin: 0 5px ; 
+    _margin: 0 3px 0 5px; 
+    margin-right: 5px; 
+}
+.showselectbody { border: 1px solid; padding: 10px 20px 20px 20px; width: 90%; margin: 0 auto; text-align: left; } 
+.unchecked { 
+    background-image:url(../images/chk_off.gif); 
+    font-weight: 100; 
+}
+
+.checked { 
+    background-image:url(../images/chk_on.gif); 
+    font-weight: 700; 
+} 
+
+label { 
+    display:block; 
+    margin-bottom:4px; 
+    margin-right:0.5%; 
+    margin-left:0.5%; 
+    padding-left:24px; 
+    background-position:4px center; 
+    background-repeat:no-repeat; 
+    cursor:pointer; 
+}
+
+.boldletter { 
+    font-size: 13px; 
+    font-weight: bold; 
+    padding: 2px 4px; 
+    margin: 0 0 10px 0; 
+}
+
+.checkedletter { 
+    font-size: 11px; 
+    font-weight: bold; 
+    width: 24.5%; 
+    float: left; 
+    margin: 2px 0 0 0; 
+    _margin: 0; 
+}
+.normalletter { 
+    font-size: 11px; 
+    font-weight: normal; 
+    width: 24.5%; 
+    float: left; 
+    margin: 2px 0 0 0; 
+    _margin: 0; 
+} 
+.showselectbody label { 
+    float: left; 
+    line-height: 18px; 
+}
+  
+.searchbutton { 
+    border: 1px solid; 
+    font-family: Verdana; 
+    font-size: 14pt; 
+    font-weight: bold; 
+    margin: 15px 5px; 
+    padding: 5px; 
+    margin: 15px 10px; 
+}  
+ 
+.showclear { 
+    clear: both; 
+    margin: 0 0 10px 0; 
+    font-size: 0px; 
+    height: 0px;
+}

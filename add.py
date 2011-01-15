@@ -43,6 +43,10 @@ def index(req):
         SHOW_ID = int(show[0])
         NAME = show[1]
         CHECKED = True if SHOW_ID in sslist else False
+
+        # Names are no longer preceeded with "The" - e.g. The Office -> Office [The]
+        if NAME.startswith('The '):
+            NAME = NAME[4:] + ' [The]'
         
         info_s = {
             'id' : SHOW_ID,

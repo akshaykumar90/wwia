@@ -16,7 +16,7 @@
     {% for show in letter.contents %}
     <div id="check{{ show.id }}" class="checkedletter">
         <label class="{{ 'checked' if show.checked else 'unchecked' }}">
-        <input class="checkbox" type="checkbox" name="selected_shows" value="{{ show.id }}" {{ 'checked="checked"' if show.checked }} />
+        <input class="checkbox" type="checkbox" name="selected_shows[]" value="{{ show.id }}" {{ 'checked="checked"' if show.checked }} />
         {{ show.name }}
         </label> 
     </div> 
@@ -30,5 +30,6 @@
     </div> 
     </form> 
     <script language="Javascript" type="text/javascript" src="http://localhost/wwia/files/js/jquery-1.4.1.js"></script> 
+    <script language="Javascript" type="text/javascript" src="http://localhost/wwia/files/js/addshows.js"></script> 
 </body> 
 </html>

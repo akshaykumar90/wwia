@@ -40,13 +40,20 @@ form { display: inline; }
 
 .checkbox { 
     position: absolute; 
-    left: -9999px; 
+    left: -9999px;
     font-weight: bold; 
     margin: 0 5px ; 
     _margin: 0 3px 0 5px; 
     margin-right: 5px; 
 }
-.showselectbody { border: 1px solid; padding: 10px 20px 20px 20px; width: 90%; margin: 0 auto; text-align: left; } 
+.showselectbody { 
+    border: 1px solid; 
+    padding: 10px 20px 20px 20px; 
+    width: 90%; 
+    margin: 0 auto; 
+    text-align: left; 
+} 
+
 .unchecked { 
     background-image:url(../images/chk_off.gif); 
     font-weight: 100; 

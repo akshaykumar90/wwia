@@ -1,19 +1,22 @@
 import MySQLdb
 import cgi
-from mod_python import Cookie
+from mod_python import Cookie, util
 from jinja2 import Environment, FileSystemLoader
 
-def show(req):
-    colors = req.form.getlist('selected_shows')
-    colors = map(lambda color: cgi.escape(color), colors)
-
-    s = """\
-<html><body>
-<p>The submitted colors were "%s"</p>
-<p><a href="./fill">Submit again!</a></p>
-</body></html>
-"""
-    return s % ', '.join(colors)
+def save(req):
+    # Get a list with all the values of the selected_shows[]
+    selected_shows = req.form.getlist('selected_shows[]')
+    # Escape the user input to avoid script injection attacks
+    selected_shows = map(lambda show: cgi.escape(show), selected_shows)
+    
+    # Value of the cookie is the list of selected shows seperated by ','
+    cookie_str = ','.join(selected_shows)
+    c = Cookie.Cookie('selected_shows', cookie_str)
+    
+    # Add the cookie to the HTTP header
+    Cookie.add_cookie(req, c)
+    
+    util.redirect(req, 'http://localhost/wwia')
 
 def index(req):
     # Configure Jinja2

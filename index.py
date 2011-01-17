@@ -16,7 +16,6 @@ def index():
     # Convert to US/Eastern time zone
     now_eastern = now_utc.astimezone(timezone('US/Eastern'))
     now_date = now_eastern.date()
-    now_time = now_eastern.time()
 
     conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb", use_unicode=True)
     cursor = conn.cursor()
@@ -52,10 +51,13 @@ def index():
     # In that case, insert the next episode from db which has been already
     # retrieved. Remember 2? Also insert that episode into dictPrevious
     for row in rowsUpcomingData:
+        end_time = dictShowData[row[0]][3] # From `tvshows`
+        endtime = datetime.datetime.combine(row[4], datetime.time()) + end_time
+        endtime = eastern.localize(endtime)
         if dictUpcoming.has_key(row[0]):
             continue 
         else:
-            if (now_date == row[4] and now_time < end_time) or (now_date < row[4]):
+            if now_eastern < endtime:
                 dictUpcoming[row[0]] = row[1:]
             else:
                 dictPrevious[row[0]] = [row[1:]]

@@ -14,7 +14,7 @@
     <div class="showclear"></div>
     <div class="boldletter">{{ letter.char }}</div> 
     {% for show in letter.contents %}
-    <div id="check{{ show.id }}" class="checkedletter">
+    <div id="check{{ show.id }}" class="{{ 'checkedletter' if show.checked else 'normalletter' }}">
         <label class="{{ 'checked' if show.checked else 'unchecked' }}">
         <input class="checkbox" type="checkbox" name="selected_shows[]" value="{{ show.id }}" {{ 'checked="checked"' if show.checked }} />
         {{ show.name }}

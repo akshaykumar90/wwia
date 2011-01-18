@@ -2,6 +2,7 @@ import MySQLdb
 import cgi
 from mod_python import Cookie, util
 from jinja2 import Environment, FileSystemLoader
+import time
 
 def save(req):
     # Get a list with all the values of the selected_shows[]
@@ -12,6 +13,7 @@ def save(req):
     # Value of the cookie is the list of selected shows seperated by ','
     cookie_str = ','.join(selected_shows)
     c = Cookie.Cookie('selected_shows', cookie_str)
+    c.expires = time.time() + 30 * 24 * 60 * 60
     
     # Add the cookie to the HTTP header
     Cookie.add_cookie(req, c)
@@ -23,6 +25,7 @@ def index(req):
     env = Environment(loader=FileSystemLoader('C:\server\public_html\wwia'))
     template = env.get_template('addshows.htm')
     
+    # Get the selected_shows cookie
     all_cookies = Cookie.get_cookies(req)
     selected_shows = all_cookies.get('selected_shows', None)
     

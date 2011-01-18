@@ -2,8 +2,9 @@ import datetime
 from pytz import timezone
 import MySQLdb
 from jinja2 import Environment, FileSystemLoader
+from mod_python import Cookie
 
-def index():
+def index(req):
     # Configure Jinja2
     env = Environment(loader=FileSystemLoader('C:\server\public_html\wwia'))
     template = env.get_template('template.htm')
@@ -17,11 +18,22 @@ def index():
     now_eastern = now_utc.astimezone(timezone('US/Eastern'))
     now_date = now_eastern.date()
 
-    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb", use_unicode=True)
+    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb_test", use_unicode=True)
     cursor = conn.cursor()
     
+    # Get the selected_shows cookie
+    all_cookies = Cookie.get_cookies(req)
+    selected_shows = all_cookies.get('selected_shows', None)
+    
+    if selected_shows:
+        sslist = selected_shows.value.split(',')
+        sslist = [int(s) for s in sslist]
+    else:
+        sslist = [1,2,3]
+    
     # Get the tvshows data from `tvshows`
-    getShowDataQuery = '''SELECT show_id, `name`, network, `time`, end_time FROM tvshows'''
+    getShowDataQuery = '''SELECT show_id, `name`, network, `time`, end_time FROM tvshows WHERE show_id IN ''' + \
+                       repr(tuple(sslist))
     cursor.execute( getShowDataQuery )
     rowsShowData = cursor.fetchall()
     # Zip it up in a dictionary keyed on show_id

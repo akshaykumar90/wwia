@@ -1,42 +1,25 @@
 body { 
-    color: #fff; 
+    font-family: Verdana, Arial, sans-serif; 
+    text-align: center; 
+    margin: 0; 
+    padding: 0; 
+    min-width: 960px; 
+    background-color : #eee;
 }
 
-.showselectbody { 
-    border-color: #000;
-    background: #333; 
-} 
-
-.explain { 
-    border-color: #000; 
-    background: #333; 
+img { 
+    border: 0px; 
 }
 
-.boldletter { 
-    color: #fff; 
-    background: #222; 
+ul { 
+    margin: 0; 
+    padding: 0; 
+    list-style-type: none; 
 }
 
-.checkedletter { 
-    color: #f0f0f0; 
+form { 
+    display: inline; 
 }
-
-.normalletter {	
-    color: #bbb; 
-}
-
-.searchbutton { 
-    border-color: #333; 
-    color: #000; 
-    background: #FEA143; 
-} 
- 
-/* CSS Document */
-
-body { font-family: Verdana, Arial, sans-serif; text-align: center; margin: 0 0 10px 0; padding: 0 0 5.5em 0; min-width: 960px; } 
-img { border: 0px; }
-ul { margin: 0; padding: 0; list-style-type: none; }
-form { display: inline; }
 
 .checkbox { 
     position: absolute; 
@@ -47,6 +30,8 @@ form { display: inline; }
     margin-right: 5px; 
 }
 .showselectbody { 
+    border-color: #000;
+    background: #333;
     border: 1px solid; 
     padding: 10px 20px 20px 20px; 
     width: 90%; 
@@ -76,6 +61,8 @@ label {
 }
 
 .boldletter { 
+    color: #fff; 
+    background: #222; 
     font-size: 13px; 
     font-weight: bold; 
     padding: 2px 4px; 
@@ -83,6 +70,7 @@ label {
 }
 
 .checkedletter { 
+    color: #f0f0f0; 
     font-size: 11px; 
     font-weight: bold; 
     width: 24.5%; 
@@ -91,6 +79,7 @@ label {
     _margin: 0; 
 }
 .normalletter { 
+    color: #bbb; 
     font-size: 11px; 
     font-weight: normal; 
     width: 24.5%; 
@@ -104,6 +93,9 @@ label {
 }
   
 .searchbutton { 
+    border-color: #333; 
+    color: #000; 
+    background: #FEA143; 
     border: 1px solid; 
     font-family: Verdana; 
     font-size: 14pt; 

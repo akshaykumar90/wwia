@@ -12,7 +12,7 @@ def save(req):
     
     # Value of the cookie is the list of selected shows seperated by ','
     cookie_str = ','.join(selected_shows)
-    c = Cookie.Cookie('selected_shows', cookie_str)
+    c = Cookie.Cookie('selected_shows', cookie_str, path='/')
     c.expires = time.time() + 30 * 24 * 60 * 60
     
     # Add the cookie to the HTTP header

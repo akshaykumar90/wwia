@@ -32,8 +32,12 @@ def index(req):
         sslist = [1,2,3]
     
     # Get the tvshows data from `tvshows`
-    getShowDataQuery = '''SELECT show_id, `name`, network, `time`, end_time FROM tvshows WHERE show_id IN ''' + \
-                       repr(tuple(sslist))
+    if len(sslist) > 1:
+        getShowDataQuery = '''SELECT show_id, `name`, network, `time`, end_time FROM tvshows WHERE show_id IN ''' + \
+                           repr(tuple(sslist))
+    else:
+        getShowDataQuery = '''SELECT show_id, `name`, network, `time`, end_time FROM tvshows WHERE show_id = ''' + \
+                           repr(sslist[0])
     cursor.execute( getShowDataQuery )
     rowsShowData = cursor.fetchall()
     # Zip it up in a dictionary keyed on show_id

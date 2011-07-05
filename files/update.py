@@ -7,7 +7,7 @@ def update():
     months = {"Jan" : 1, "Feb" : 2, "Mar" : 3, "Apr" : 4, "May" : 5, "Jun" : 6,
               "Jul" : 7, "Aug" : 8, "Sep" : 9, "Oct" : 10, "Nov" : 11, "Dec" : 12}
 
-    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb", use_unicode=True, charset="utf8")
+    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="tvdb_test", use_unicode=True, charset="utf8")
     if conn:
         cursor = conn.cursor()
 
@@ -75,12 +75,15 @@ def update():
 
             print "show_id : %d" % (SHOW_ID)
             
-            latestEpName = ''.join(episodes[0].contents[1].contents[0].findAll(text=True))  # House Episode Recap: "Small Sacrifices"
-            latestEp = episodes[0].contents[1].contents[1].strip()  # Season x, Episode x
-            splitlatestEp = latestEp.split(",")
-            latestSeason = int(splitlatestEp[0][7:])
-            latestEpNo = int(splitlatestEp[1][8:])
-            print "Latest episode on web : %d-%d" % (latestSeason, latestEpNo)
+            if episodes:
+                latestEpName = ''.join(episodes[0].contents[1].contents[0].findAll(text=True))  # House Episode Recap: "Small Sacrifices"
+                latestEp = episodes[0].contents[1].contents[1].strip()  # Season x, Episode x
+                splitlatestEp = latestEp.split(",")
+                latestSeason = int(splitlatestEp[0][7:])
+                latestEpNo = int(splitlatestEp[1][8:])
+                print "Latest episode on web : %d-%d" % (latestSeason, latestEpNo)
+            else:
+                print "No episodes found on the web"
 
             if dictLatest.has_key(SHOW_ID):
                 dblatestEp = dictLatest[SHOW_ID]
